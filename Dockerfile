@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm installAdd commentMore actions
+RUN npm install
 
 # Copy the application code
 COPY . .
