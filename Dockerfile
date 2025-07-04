@@ -1,18 +1,19 @@
 #syntax=docker/dockerfile:1
 
-# Use the official Node.js image from the Docker Hub
-FROM node:latest
-
-# Set the working directory inside the container
+# === Build stage: Install dependencies and build application ===
+FROM docker/dhi-node:24.3.0-alpine3.21-dev AS builder
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy the application code
 COPY . .
 
-# Command to run the Node.js application
+# === Final stage: Create minimal runtime image ===
+FROM docker/dhi-node:24.3.0-alpine3.21
+ENV PATH=/usr/src/app/node_modules/.bin:$PATH
+
+WORKDIR /usr/src/app
+COPY --from=builder /usr/src/app /usr/src/app
+
 CMD ["node", "index.js"]
